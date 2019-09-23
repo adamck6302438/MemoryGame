@@ -15,18 +15,34 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Score: " textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Dhp-Qa-jNb">
-                                <rect key="frame" x="100" y="69" width="74.5" height="30"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="25"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gAb-rv-rIc">
-                                <rect key="frame" x="224.5" y="69" width="59.5" height="30"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="25"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="1YG-bu-YWO">
+                                <rect key="frame" x="0.0" y="69" width="414" height="60"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Score:     " textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Dhp-Qa-jNb">
+                                        <rect key="frame" x="0.0" y="0.0" width="138" height="60"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gAb-rv-rIc">
+                                        <rect key="frame" x="138" y="0.0" width="138" height="60"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sXX-lQ-cKh">
+                                        <rect key="frame" x="276" y="0.0" width="138" height="60"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                        <state key="normal" title="Shuffle"/>
+                                        <connections>
+                                            <action selector="shuffleBoard:" destination="BYZ-38-t0r" eventType="touchUpInside" id="38d-Kx-Fxv"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="Vr4-Ru-407"/>
+                                </constraints>
+                            </stackView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.69999999999999996" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="lego2" translatesAutoresizingMaskIntoConstraints="NO" id="TOE-R8-iVa">
                                 <rect key="frame" x="0.0" y="44" width="414" height="818"/>
                             </imageView>
@@ -126,16 +142,15 @@
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="gAb-rv-rIc" secondAttribute="trailing" constant="130" id="0it-HB-azZ"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="TOE-R8-iVa" secondAttribute="trailing" id="2VN-yk-X68"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="U1a-TS-tCo" secondAttribute="bottom" id="GOj-iJ-eIp"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="1YG-bu-YWO" secondAttribute="trailing" id="HsW-z8-KQl"/>
                             <constraint firstItem="U1a-TS-tCo" firstAttribute="top" secondItem="TOE-R8-iVa" secondAttribute="top" id="K9y-9M-s3H"/>
-                            <constraint firstItem="gAb-rv-rIc" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="25" id="bgG-tO-Quf"/>
-                            <constraint firstItem="Dhp-Qa-jNb" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="25" id="gmk-YJ-ViO"/>
+                            <constraint firstItem="1YG-bu-YWO" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="NT6-EO-FRg"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="U1a-TS-tCo" secondAttribute="trailing" id="jug-HK-t4T"/>
                             <constraint firstItem="TOE-R8-iVa" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="meB-C6-xaI"/>
                             <constraint firstItem="U1a-TS-tCo" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="mei-dC-s3e"/>
-                            <constraint firstItem="Dhp-Qa-jNb" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="100" id="mlZ-7i-fNB"/>
+                            <constraint firstItem="1YG-bu-YWO" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="25" id="pUV-hv-YDO"/>
                             <constraint firstItem="TOE-R8-iVa" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="tpF-mR-1Dg"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="TOE-R8-iVa" secondAttribute="bottom" id="ydX-Tu-ovT"/>
                         </constraints>
@@ -152,6 +167,7 @@
                         <outlet property="matchOption1Label" destination="vsg-ud-yLe" id="6l8-qk-z53"/>
                         <outlet property="matchOptionLabel2" destination="vea-Jg-t31" id="SQz-ec-1YB"/>
                         <outlet property="scoreLabel" destination="gAb-rv-rIc" id="MyD-kP-3uj"/>
+                        <outlet property="topStackView" destination="1YG-bu-YWO" id="t9T-JY-r6O"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

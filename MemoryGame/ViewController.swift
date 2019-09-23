@@ -36,6 +36,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var configSwitch1: UISwitch!
     @IBOutlet weak var configSwitch2: UISwitch!
     @IBOutlet weak var configView: UIView!
+    @IBOutlet weak var topStackView: UIStackView!
     
     var cards: [UIImageView] = []
     let urlString = "https://shopicruit.myshopify.com/admin/products.json?page=1&access_token=c32313df0d0ef512ca64d5b336a0d7c6"
@@ -83,8 +84,7 @@ class ViewController: UIViewController {
     private func startPlay(){
         let numOfCards = self.gridColumn*self.gridRow
         self.configView.alpha = 0
-        self.view.bringSubviewToFront(scoreLabel)
-        self.view.bringSubviewToFront(descriptionLabel)
+        self.view.bringSubviewToFront(topStackView)
         scoreLabel.text = "0"
         configGrid(numOfCards: numOfCards)
         fetchCards()
@@ -178,8 +178,8 @@ class ViewController: UIViewController {
     
     private func shuffle(){
         for i in 0...49{
-            let shuffleIndex1 = Int(arc4random_uniform(19))
-            let shuffleIndex2 = Int(arc4random_uniform(19))
+            let shuffleIndex1 = Int(arc4random_uniform(UInt32(board.count)))
+            let shuffleIndex2 = Int(arc4random_uniform(UInt32(board.count)))
             board.swapAt(shuffleIndex1, shuffleIndex2)
         }
     }
@@ -235,44 +235,61 @@ class ViewController: UIViewController {
             
             
         default:
-        if(selected1==nil){
-            selected1 = board[tappedIndex]
-            selected1Index = tappedIndex
-        }else if(selected1Index != tappedIndex){
-            selected2 = board[tappedIndex]
-            if(selected1.id == selected2.id){
-                self.numMatched += 1
-                cards[tappedIndex].isUserInteractionEnabled = false
-                cards[selected1Index].isUserInteractionEnabled = false
-                UIView.animate(withDuration: 1, animations: {
-                    self.cards[tappedIndex].alpha = 0
-                    self.cards[self.selected1Index].alpha = 0
-                }, completion: nil)
-                self.scoreLabel.text = "\(numMatched)"
-                if(numMatched == board.count/2){
-                    self.cards.removeAll()
-                    let alertController = UIAlertController(title: "Hooray", message: "Congrats! You've won!", preferredStyle: .alert)
-                    alertController.addAction(UIAlertAction(title: "Play Again", style: .default, handler: {(_) in
-                        self.restart()
-                    }))
-                    alertController.addAction(UIAlertAction(title: "Quit", style: .cancel, handler: {(_) in
-                        exit(0)
-                    }))
-                    self.present(alertController, animated: true, completion: nil)
+            if(selected1==nil){
+                selected1 = board[tappedIndex]
+                selected1Index = tappedIndex
+            }else if(selected1Index != tappedIndex){
+                selected2 = board[tappedIndex]
+                if(selected1.id == selected2.id){
+                    self.numMatched += 1
+                    cards[tappedIndex].isUserInteractionEnabled = false
+                    cards[selected1Index].isUserInteractionEnabled = false
+                    UIView.animate(withDuration: 1, animations: {
+                        self.cards[tappedIndex].alpha = 0
+                        self.cards[self.selected1Index].alpha = 0
+                    }, completion: nil)
+                    self.scoreLabel.text = "\(numMatched)"
+                    if(numMatched == board.count/2){
+                        self.cards.removeAll()
+                        let alertController = UIAlertController(title: "Hooray", message: "Congrats! You've won!", preferredStyle: .alert)
+                        alertController.addAction(UIAlertAction(title: "Play Again", style: .default, handler: {(_) in
+                            self.restart()
+                        }))
+                        alertController.addAction(UIAlertAction(title: "Quit", style: .cancel, handler: {(_) in
+                            exit(0)
+                        }))
+                        self.present(alertController, animated: true, completion: nil)
+                    }
+                }else{
+                    Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false, block: {_ in
+                        self.cards[self.selected1Index].image = UIImage(named: "cardback")
+                        self.cards[tappedIndex].image = UIImage(named: "cardback")
+                    })
                 }
-            }else{
-                Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false, block: {_ in
-                    self.cards[self.selected1Index].image = UIImage(named: "cardback")
-                    self.cards[tappedIndex].image = UIImage(named: "cardback")
-                })
+                selected1 = nil
+                selected2 = nil
             }
-            selected1 = nil
-            selected2 = nil
+        }
+        
+    }
+    
+    @IBAction func shuffleBoard(_ sender: Any) {
+        var shuffleIndex1: Int!
+        var shuffleIndex2: Int!
+        for i in 0...49{
+            while true{
+                var validIndexes = false
+                shuffleIndex1 = Int(arc4random_uniform(UInt32(board.count)))
+                shuffleIndex2 = Int(arc4random_uniform(UInt32(board.count)))
+                if(cards[shuffleIndex1].alpha == 1 && cards[shuffleIndex2].alpha == 1){
+                    break
+                }
+            }
+            
+            board.swapAt(shuffleIndex1, shuffleIndex2)
         }
     }
     
-}
-
-
+    
 }
 
