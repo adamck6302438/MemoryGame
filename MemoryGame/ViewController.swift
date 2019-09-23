@@ -72,9 +72,16 @@ class ViewController: UIViewController {
         fetchCards()
     }
     
+    private func restart(){
+        self.configView.alpha = 1
+        self.view.bringSubviewToFront(configView)
+        scoreLabel.text = "0"
+        numMatched = 0
+    }
+    
     private func configGrid(numOfCards: Int){
         self.cardWidth = ((self.view.frame.width - (10*6))/5)
-        //        self.cardHeight = (self.view.frame.height - 100)
+        self.cardHeight = (self.view.frame.height - 100)
         for i in 0..<numOfCards {
             let tapRecog = UITapGestureRecognizer(target: self, action: #selector(handleTap(tapGestureRecog:)))
             let card = UIImageView()
@@ -104,18 +111,6 @@ class ViewController: UIViewController {
         }
     }
     
-    private func restart(){
-        self.configView.alpha = 1
-        self.view.bringSubviewToFront(configView)
-        scoreLabel.text = "0"
-        numMatched = 0
-        for i in 0..<cards.count{
-            cards[i].image = UIImage(named: "cardback")
-            cards[i].alpha = 1
-            cards[i].isUserInteractionEnabled = true
-        }
-    }
-    
     private func fetchCards(){
         let url = URL(string: self.urlString)
         let task = URLSession.shared.dataTask(with: url!) {(data, response, err) in
@@ -138,11 +133,32 @@ class ViewController: UIViewController {
         if(!self.board.isEmpty){
             self.board.removeAll()
         }
-        for index in 0..<(cards.count/2){
-            let i = Int(arc4random_uniform(49))
+        var indexArray = [Int]()
+        var i = 0
+//        for index in 0..<(cards.count/2){
+        while board.count < self.gridColumn*self.gridRow {
+//            var repeated = false
+            while true {
+                var repeated = false
+                i = Int(arc4random_uniform(49))
+                
+                for n in 0..<indexArray.count{
+                    if(indexArray[n] == i){
+                        repeated = true
+                    }
+                }
+                
+                if(!repeated){
+                    indexArray.append(i)
+                    break
+                }
+            }
+            
             board.append(cardsArray[i])
             board.append(cardsArray[i])
         }
+        print(indexArray)
+//        }
         shuffle()
     }
     
@@ -178,7 +194,6 @@ class ViewController: UIViewController {
                     self.cards.removeAll()
                     let alertController = UIAlertController(title: "Hooray", message: "Congrats! You've won!", preferredStyle: .alert)
                     alertController.addAction(UIAlertAction(title: "Play Again", style: .default, handler: {(_) in
-                        print("Play again")
                         self.restart()
                     }))
                     alertController.addAction(UIAlertAction(title: "Quit", style: .cancel, handler: {(_) in
