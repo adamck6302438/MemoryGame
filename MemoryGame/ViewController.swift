@@ -25,10 +25,18 @@ struct Card: Codable{
 
 class ViewController: UIViewController {
     
-
+    
     @IBOutlet weak var scoreLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
-
+    @IBOutlet weak var configLabel: UILabel!
+    @IBOutlet weak var gridOption1Label: UILabel!
+    @IBOutlet weak var gridOption2Label: UILabel!
+    @IBOutlet weak var matchOption1Label: UILabel!
+    @IBOutlet weak var matchOptionLabel2: UILabel!
+    @IBOutlet weak var configSwitch1: UISwitch!
+    @IBOutlet weak var configSwitch2: UISwitch!
+    @IBOutlet weak var configView: UIView!
+    
     var cards: [UIImageView] = []
     let urlString = "https://shopicruit.myshopify.com/admin/products.json?page=1&access_token=c32313df0d0ef512ca64d5b336a0d7c6"
     var cardsArray: [Products] = []
@@ -39,18 +47,66 @@ class ViewController: UIViewController {
     var numMatched = 0
     var cardWidth : CGFloat!
     var cardHeight : CGFloat!
+    var gridColumn : Int!
+    var gridRow : Int!
+    var matchPair : Int!
     
-
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    @IBAction func play(_ sender: Any) {
+        if configSwitch1.isOn{
+            self.gridRow = 6
+            self.gridColumn = 5
+        }else{
+            self.gridRow = 4
+            self.gridColumn = 5
+        }
+        let numOfCards = self.gridColumn*self.gridRow
+        self.configView.alpha = 0
         self.view.bringSubviewToFront(scoreLabel)
         self.view.bringSubviewToFront(descriptionLabel)
         scoreLabel.text = "0"
-        configGrid(numOfCards: 30)
+        configGrid(numOfCards: numOfCards)
         fetchCards()
     }
     
+    private func configGrid(numOfCards: Int){
+        self.cardWidth = ((self.view.frame.width - (10*6))/5)
+        //        self.cardHeight = (self.view.frame.height - 100)
+        for i in 0..<numOfCards {
+            let tapRecog = UITapGestureRecognizer(target: self, action: #selector(handleTap(tapGestureRecog:)))
+            let card = UIImageView()
+            card.image = UIImage(named: "cardback")
+            card.translatesAutoresizingMaskIntoConstraints = false
+            card.isUserInteractionEnabled = true
+            card.addGestureRecognizer(tapRecog)
+            self.cards.append(card)
+        }
+        setUpGrid(column: self.gridColumn, row: self.gridRow)
+    }
+    
+    private func setUpGrid(column: Int, row: Int){
+        var cardIndex = 0
+        for r in 0..<row {
+            for c in 0..<column{
+                self.view.addSubview(cards[cardIndex])
+                cards[cardIndex].restorationIdentifier = "\(cardIndex)"
+                NSLayoutConstraint.activate([
+                    cards[cardIndex].topAnchor.constraint(equalTo: self.view.topAnchor, constant: CGFloat(100+(r*(90+10)))),
+                    cards[cardIndex].leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: CGFloat(15+(c*(70+10)))),
+                    cards[cardIndex].widthAnchor.constraint(equalToConstant: self.cardWidth),
+                    cards[cardIndex].heightAnchor.constraint(equalToConstant: 90)
+                ])
+                cardIndex += 1
+            }
+        }
+    }
+    
     private func restart(){
+        self.configView.alpha = 1
+        self.view.bringSubviewToFront(configView)
         scoreLabel.text = "0"
         numMatched = 0
         for i in 0..<cards.count{
@@ -58,7 +114,6 @@ class ViewController: UIViewController {
             cards[i].alpha = 1
             cards[i].isUserInteractionEnabled = true
         }
-        setUpBoard()
     }
     
     private func fetchCards(){
@@ -120,6 +175,7 @@ class ViewController: UIViewController {
                 }, completion: nil)
                 self.scoreLabel.text = "\(numMatched)"
                 if(numMatched == board.count/2){
+                    self.cards.removeAll()
                     let alertController = UIAlertController(title: "Hooray", message: "Congrats! You've won!", preferredStyle: .alert)
                     alertController.addAction(UIAlertAction(title: "Play Again", style: .default, handler: {(_) in
                         print("Play again")
@@ -142,43 +198,6 @@ class ViewController: UIViewController {
     }
     
     
-    //bonus features
-    private func configGrid(numOfCards: Int){
-        let row = numOfCards/5
-        self.cardWidth = ((self.view.frame.width - (10*6))/5)
-//        self.cardHeight = (self.view.frame.height - 100)
-        for i in 0..<numOfCards {
-            let tapRecog = UITapGestureRecognizer(target: self, action: #selector(handleTap(tapGestureRecog:)))
-            let card = UIImageView()
-            card.image = UIImage(named: "cardback")
-            card.translatesAutoresizingMaskIntoConstraints = false
-            card.isUserInteractionEnabled = true
-            card.addGestureRecognizer(tapRecog)
-            self.cards.append(card)
-        }
-        setUpGrid(column: 5, row: row)
-    }
     
-    private func setUpGrid(column: Int, row: Int){
-        var cardIndex = 0
-        for r in 0..<row {
-            for c in 0..<column{
-                self.view.addSubview(cards[cardIndex])
-                cards[cardIndex].restorationIdentifier = "\(cardIndex)"
-                NSLayoutConstraint.activate([
-                    cards[cardIndex].topAnchor.constraint(equalTo: self.view.topAnchor, constant: CGFloat(100+(r*(90+10)))),
-                    cards[cardIndex].leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: CGFloat(15+(c*(70+10)))),
-                    cards[cardIndex].widthAnchor.constraint(equalToConstant: self.cardWidth),
-                    cards[cardIndex].heightAnchor.constraint(equalToConstant: 90)
-                ])
-                cardIndex += 1
-            }
-        }
-    }
-    
-    private func configMatch(pairs: Int){
-        
-    }
-
 }
 
