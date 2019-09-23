@@ -41,7 +41,7 @@
                                                 <fontDescription key="fontDescription" type="system" pointSize="25"/>
                                                 <state key="normal" title="Play!"/>
                                                 <connections>
-                                                    <action selector="play:" destination="BYZ-38-t0r" eventType="touchUpInside" id="rrW-XQ-CvF"/>
+                                                    <action selector="configureGameSetting:" destination="BYZ-38-t0r" eventType="touchUpInside" id="c9T-Nz-snS"/>
                                                 </connections>
                                             </button>
                                         </subviews>

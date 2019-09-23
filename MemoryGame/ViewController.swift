@@ -44,6 +44,8 @@ class ViewController: UIViewController {
     var selected1: Products!
     var selected1Index = 0
     var selected2: Products!
+    var selected2Index = 0
+    var selected3: Products!
     var numMatched = 0
     var cardWidth : CGFloat!
     var cardHeight : CGFloat!
@@ -54,15 +56,31 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
     }
-    
-    @IBAction func play(_ sender: Any) {
-        if configSwitch1.isOn{
+    @IBAction func configureGameSetting(_ sender: Any) {
+        if configSwitch1.isOn && !configSwitch2.isOn{
             self.gridRow = 6
             self.gridColumn = 5
-        }else{
+            self.matchPair = 2
+            startPlay()
+        }else if !configSwitch1.isOn && !configSwitch2.isOn{
             self.gridRow = 4
             self.gridColumn = 5
+            self.matchPair = 2
+            startPlay()
+        }else if configSwitch1.isOn && configSwitch2.isOn{
+            self.gridRow = 6
+            self.gridColumn = 5
+            self.matchPair = 3
+            startPlay()
+        }else{
+            let alertController = UIAlertController(title: "Bad Grid Option", message: "Please choose a different grid configuration", preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "Got it!", style: .default, handler: nil))
+            self.present(alertController, animated: true, completion: nil)
         }
+        
+    }
+    
+    private func startPlay(){
         let numOfCards = self.gridColumn*self.gridRow
         self.configView.alpha = 0
         self.view.bringSubviewToFront(scoreLabel)
@@ -135,9 +153,7 @@ class ViewController: UIViewController {
         }
         var indexArray = [Int]()
         var i = 0
-//        for index in 0..<(cards.count/2){
         while board.count < self.gridColumn*self.gridRow {
-//            var repeated = false
             while true {
                 var repeated = false
                 i = Int(arc4random_uniform(49))
@@ -153,12 +169,10 @@ class ViewController: UIViewController {
                     break
                 }
             }
-            
-            board.append(cardsArray[i])
-            board.append(cardsArray[i])
+            for t in 0..<self.matchPair{
+                board.append(cardsArray[i])
+            }
         }
-        print(indexArray)
-//        }
         shuffle()
     }
     
@@ -171,11 +185,56 @@ class ViewController: UIViewController {
     }
     
     @objc private func handleTap(tapGestureRecog: UITapGestureRecognizer){
+        
         let tappedIndex = (tapGestureRecog.view?.restorationIdentifier as! NSString).integerValue
         let url = URL(string: board[tappedIndex].image.src)
         let data = try? Data(contentsOf: url!)
         self.cards[tappedIndex].image = UIImage(data: data!)
         self.view.setNeedsDisplay()
+        
+        switch matchPair {
+        case 3:
+            if(selected1==nil){
+                selected1 = board[tappedIndex]
+                selected1Index = tappedIndex
+            }else if(selected2 == nil && tappedIndex != selected1Index){
+                selected2 = board[tappedIndex]
+                selected2Index = tappedIndex
+            }else if(selected3 == nil && tappedIndex != selected1Index && tappedIndex != selected2Index){
+                selected3 = board[tappedIndex]
+                if(selected1.id == selected2.id && selected1.id == selected3.id){
+                    self.numMatched += 1
+                    UIView.animate(withDuration: 1, animations: {
+                        self.cards[tappedIndex].alpha = 0
+                        self.cards[self.selected1Index].alpha = 0
+                        self.cards[self.selected2Index].alpha = 0
+                    }, completion: nil)
+                    self.scoreLabel.text = "\(numMatched)"
+                    if(numMatched == board.count/3){
+                        self.cards.removeAll()
+                        let alertController = UIAlertController(title: "Hooray", message: "Congrats! You've won!", preferredStyle: .alert)
+                        alertController.addAction(UIAlertAction(title: "Play Again", style: .default, handler: {(_) in
+                            self.restart()
+                        }))
+                        alertController.addAction(UIAlertAction(title: "Quit", style: .cancel, handler: {(_) in
+                            exit(0)
+                        }))
+                        self.present(alertController, animated: true, completion: nil)
+                    }
+                }else{
+                    Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false, block: {_ in
+                        self.cards[self.selected1Index].image = UIImage(named: "cardback")
+                        self.cards[self.selected2Index].image = UIImage(named: "cardback")
+                        self.cards[tappedIndex].image = UIImage(named: "cardback")
+                    })
+                }
+                selected1 = nil
+                selected2 = nil
+                selected3 = nil
+            }
+            
+            
+        default:
         if(selected1==nil){
             selected1 = board[tappedIndex]
             selected1Index = tappedIndex
@@ -212,7 +271,8 @@ class ViewController: UIViewController {
         }
     }
     
-    
-    
+}
+
+
 }
 
